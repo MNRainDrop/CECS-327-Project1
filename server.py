@@ -1,6 +1,7 @@
 import socket
 import threading
 from globalVariables import *
+import os
 
 SERVER = socket.gethostbyname(socket.gethostname())
 ADDR = (SERVER, PORT)
@@ -14,6 +15,7 @@ server.bind(ADDR)
 print(f"[Server] Server bound to {ADDR}")
 
 def handle_client(conn, addr):
+    print(os.getpid())
     print(f"[Server] New connection : {addr}")
 
     connected = True
@@ -36,7 +38,7 @@ def start():
         conn, addr = server.accept()
         thread = threading.Thread(target=handle_client, args=(conn, addr))
         thread.start()
-        print(f"[Server] Active Connections {threading.activeCount() - 1}")
+        print(f"[Server] Active Connections {threading.active_count() - 1}")
 
 print("[Server] Server is starting...")
 start()

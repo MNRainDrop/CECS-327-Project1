@@ -1,7 +1,7 @@
 from globalVariables import *
 import socket
 
-SERVER = "172.22.160.1"
+SERVER = "127.0.1.1"
 ADDR = (SERVER, PORT)
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
