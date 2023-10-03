@@ -1,26 +1,42 @@
 import socket
+import threading
+from globalVariables import *
 
-# creates socket object
-s = socket.socket()
-print("Socket successfully created")
+SERVER = socket.gethostbyname(socket.gethostname())
+ADDR = (SERVER, PORT)
 
-# reserve port
-port = 8080
+# creates socket
+server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+print("[Server] Socket Created")
 
 # bind to the port
-s.bind(('', port))
-print("Socket binded to %s" %(port))
+server.bind(ADDR)
+print(f"[Server] Server bound to {ADDR}")
 
-# listen
-s.listen(5)
-print("Socket is listening")
+def handle_client(conn, addr):
+    print(f"[Server] New connection : {addr}")
 
-while True:
-    c, addr = s.accept()
-    print("Got connection from", addr)
+    connected = True
+    while connected:
+        msg_len = conn.recv(MESSAGEHEADER).decode(FORMAT)
+        if msg_len:
+            msg_len = int(msg_len)
+            msg = conn.recv(msg_len).decode(FORMAT)
+            if msg == DISCONNECT_MESSAGE:
+                connected = False
+            print(f"[{addr}] {msg}")
+    conn.close()
 
-    c.send("Thank you for connecting".encode())
+def start():
+    # listen for connections
+    server.listen()
+    print(f"[Server] Server is listening on {SERVER}")
+    while True:
+        # when connection is established create a new thread of handle_client
+        conn, addr = server.accept()
+        thread = threading.Thread(target=handle_client, args=(conn, addr))
+        thread.start()
+        print(f"[Server] Active Connections {threading.activeCount() - 1}")
 
-    c.close()
-
-    break
+print("[Server] Server is starting...")
+start()
