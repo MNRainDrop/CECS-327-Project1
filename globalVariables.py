@@ -4,3 +4,4 @@ FORMAT = 'UTF-8'
 DISCONNECT_MESSAGE = "/stop"
 BROADCAST_MESSAGE = "/broadcast"
 LIST_CLIENT_MESSAGE = "/list"
+JOIN_GROUP = "/join"

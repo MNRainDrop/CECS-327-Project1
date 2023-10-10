@@ -4,7 +4,16 @@ import threading
 
 exit_event = threading.Event()
 
-SERVER = "172.22.160.1"
+print("Enter Server IP Address:")
+invalid = True
+while (invalid):
+    SERVER = input()
+    try:
+        socket.inet_aton(SERVER)
+        invalid = False
+    except:
+        print("Retry IP address")
+
 ADDR = (SERVER, PORT)
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
