@@ -21,6 +21,10 @@ print(f"[Server] Server bound to {ADDR}")
 
 # used to broadcast messages to clients
 broadcast_message = []
+
+#create groups for multicast to put the clients in
+client_groups = []
+
 # list of clients that are currently connected to the server
 client_list = []
 
@@ -60,6 +64,10 @@ def handle_client(conn, addr):
                     break
                 elif command == BROADCAST_MESSAGE:
                     broadcast(f"[{addr[1]}]", args)
+                if command == JOIN_GROUP:
+                    join_group(conn, args)
+                elif command == MULTICAST_MESSAGE:
+                    multicast(f"[{addr[1]}", args)
                 elif command == LIST_CLIENT_MESSAGE:
                     clients = ""
                     for i in range(len(client_list)):
@@ -106,6 +114,17 @@ def broadcast(sender, message):
     broadcast_message.append((sender, message))
     print(f"{sender} {message}")
 
+def join_group(conn, group_name):
+    if group_name not in client_groups:
+        client_groups[group_name] = []
+    client_groups[group_name].append(conn)
+    conn.send(f"[Server] Joined group '{group_name}'".encode(FORMAT))
+
+def multicast(sender, message, group_name):
+    if group_name in client_groups:
+        for client in client_groups[group_name]:
+            client.send(f"{sender} (group '{group_name}'): {message}".encode(FORMAT))
+
 def start():
     # start listen thread
     listening = threading.Thread(target=listen)
@@ -130,6 +149,11 @@ def start():
             break
         elif command.lower() == BROADCAST_MESSAGE:
             broadcast("[Server]", args)
+        elif command.lower() == JOIN_GROUP:
+            print("Invalid command: 'JOIN_GROUP' is not allowed through the console.")
+        elif command.lower() == MULTICAST_MESSAGE:
+            group_name, message = args.split(maxsplit=1)
+            multicast("[Server]", message, group_name)
         elif command == LIST_CLIENT_MESSAGE:
             clients = ""
             for x in client_list:
