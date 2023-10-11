@@ -159,7 +159,6 @@ def multicast(sender, group_name, message):
             print(f"{sender} {group_name} {message}")
 
 def logging(name, srcIP, dstIP, srcPort, dstPort, msg):
-    # df = pd.DataFrame({'Type':[], 'Time(s)':[], 'Source_IP':[], 'Destination_IP':[], 'Source_Port':[], 'Destination_Port':[], 'Length(bytes)':[]})
     if msg == None:
         msglen = 0
     else:
